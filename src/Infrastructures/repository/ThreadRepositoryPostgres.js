@@ -1,3 +1,4 @@
+const InsertThread = require('../../Domains/threads/entities/InsertThread');
 const NewThread = require('../../Domains/threads/entities/NewThread');
 const ThreadRepository = require('../../Domains/threads/ThreadRepository');
 
@@ -23,7 +24,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     const result = await this._pool.query(query);
     const row = result.rows[0];
 
-    return new NewThread({
+    return new InsertThread({
       id: row.id,
       title: row.title,
       body: row.body,

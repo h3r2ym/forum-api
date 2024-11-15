@@ -31,7 +31,6 @@ describe('a NewThread entities', () => {
     const payload = {
       title: 'title dicoding',
       body: 'body dicoding',
-      owner: 'user-22231',
     };
 
     // Action
@@ -39,6 +38,6 @@ describe('a NewThread entities', () => {
 
     // Assert
     expect(newThread.title).toEqual(payload.title);
-    expect(newThread.owner).toEqual(payload.owner);
+    expect(newThread.body).toEqual(payload.body);
   });
 });

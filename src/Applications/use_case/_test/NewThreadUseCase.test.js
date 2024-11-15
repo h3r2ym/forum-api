@@ -1,5 +1,6 @@
 const AuthenticationRepository = require('../../../Domains/authentications/AuthenticationRepository');
 const NewAuth = require('../../../Domains/authentications/entities/NewAuth');
+const InsertThread = require('../../../Domains/threads/entities/InsertThread');
 const NewThread = require('../../../Domains/threads/entities/NewThread');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 const UserRepository = require('../../../Domains/users/UserRepository');
@@ -15,11 +16,11 @@ describe('NewThreadUseCase', () => {
       owner: 'user-123',
     };
 
-    const mockNewThread = new NewThread({
+    const mockNewThread = new InsertThread({
       id: 'thread-123',
       title: useCasePayload.title,
       body: useCasePayload.body,
-      owner: useCasePayload.owner,
+      owner: 'user-123',
     });
 
     /** creating dependency of use case */
@@ -42,7 +43,7 @@ describe('NewThreadUseCase', () => {
 
     // Assert
     expect(addThread).toStrictEqual(
-      new NewThread({
+      new InsertThread({
         id: 'thread-123',
         title: useCasePayload.title,
         body: useCasePayload.body,
