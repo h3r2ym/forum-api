@@ -1,5 +1,5 @@
+const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const InsertThread = require('../../Domains/threads/entities/InsertThread');
-const NewThread = require('../../Domains/threads/entities/NewThread');
 const ThreadRepository = require('../../Domains/threads/ThreadRepository');
 
 class ThreadRepositoryPostgres extends ThreadRepository {
@@ -30,6 +30,68 @@ class ThreadRepositoryPostgres extends ThreadRepository {
       body: row.body,
       owner: row.owner,
     });
+  }
+
+  async checkThreadById(threadId) {
+    const query = {
+      text: 'SELECT * from threads WHERE id = $1',
+      values: [threadId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows[0]) {
+      throw new NotFoundError('Data thread tidak ditemukan');
+    }
+
+    return result.rows[0];
+  }
+
+  async getThreadById(threadId) {
+    const query = {
+      text: 'SELECT threads.*,users.username from threads LEFT JOIN users ON threads.owner = users.id WHERE threads.id = $1',
+      values: [threadId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows[0]) {
+      throw new NotFoundError('Data thread tidak ditemukan');
+    }
+
+    return result.rows[0];
+  }
+
+  async addComment(threadId, userId, newComment) {
+    const { content } = newComment;
+    const id = `comment-${this._idGenerator()}`;
+    const createdAt = new Date().toISOString();
+    const updatedAt = createdAt;
+
+    const query = {
+      text: 'INSERT INTO comments VALUES ($1,$2,$3,$4,$5,$6) RETURNING id, content, owner',
+      values: [id, threadId, content, userId, createdAt, updatedAt],
+    };
+
+    const result = await this._pool.query(query);
+    const row = result.rows[0];
+
+    return {
+      id: row.id,
+      content: row.content,
+      owner: row.owner,
+    };
+  }
+
+  async getCommendsByThreadId(threadId) {
+    const query = {
+      text: 'SELECT comments.*,users.username FROM comments INNER JOIN users ON comments.owner = users.id WHERE thread_id = $1 ORDER BY created_at ASC',
+      values: [threadId],
+    };
+
+    const result = await this._pool.query(query);
+
+    return result.rows;
   }
 }
 

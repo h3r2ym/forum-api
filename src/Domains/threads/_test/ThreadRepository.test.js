@@ -9,5 +9,17 @@ describe('ThreadRepository interface', () => {
     await expect(userRepository.addThread({})).rejects.toThrowError(
       'THREAD_RESPOSITORY.METHOD_NOT_IMPLEMENTED'
     );
+    await expect(userRepository.addComment({})).rejects.toThrowError(
+      'THREAD_RESPOSITORY.METHOD_NOT_IMPLEMENTED'
+    );
+    await expect(userRepository.checkThreadById({})).rejects.toThrowError(
+      'THREAD_RESPOSITORY.METHOD_NOT_IMPLEMENTED'
+    );
+    await expect(userRepository.getThreadById({})).rejects.toThrowError(
+      'THREAD_RESPOSITORY.METHOD_NOT_IMPLEMENTED'
+    );
+    await expect(userRepository.getCommendsByThreadId({})).rejects.toThrowError(
+      'THREAD_RESPOSITORY.METHOD_NOT_IMPLEMENTED'
+    );
   });
 });

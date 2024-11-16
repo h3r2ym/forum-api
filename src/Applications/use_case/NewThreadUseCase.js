@@ -12,7 +12,7 @@ class NewThreadUseCase {
       const result = await this._threadRepository.addThread(userid, newThread);
       return result;
     } catch (error) {
-      throw new InvariantError('Data yang   dikirimkan kurang atau salah.');
+      throw new InvariantError('Data yang dikirimkan kurang atau salah.');
     }
   }
 }
