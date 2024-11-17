@@ -1,3 +1,5 @@
+const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
+const InvariantError = require('../../Commons/exceptions/InvariantError');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const InsertThread = require('../../Domains/threads/entities/InsertThread');
 const ThreadRepository = require('../../Domains/threads/ThreadRepository');
@@ -92,6 +94,41 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     const result = await this._pool.query(query);
 
     return result.rows;
+  }
+
+  async checkCommentOwner(commentId, userId) {
+    const query = {
+      text: 'SELECT * FROM comments WHERE id = $1',
+      values: [commentId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new NotFoundError('Comment tidak ditemukan');
+    }
+
+    if (result.rows[0].owner !== userId) {
+      throw new AuthorizationError('Anda bukan pemilik comment ini');
+    }
+  }
+
+  async deleteCommentById(commentId) {
+    const updatedAt = new Date().toISOString();
+    const deletedAt = updatedAt;
+
+    const query = {
+      text: 'UPDATE comments SET updated_at = $2, deleted_at = $3 WHERE id = $1 RETURNING id',
+      values: [commentId, updatedAt, deletedAt],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new InvariantError('Hapus comment gagal');
+    }
+
+    return result.rows[0];
   }
 }
 

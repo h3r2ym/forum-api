@@ -1,4 +1,5 @@
 /* istanbul ignore file */
+const bcrypt = require('bcrypt');
 const pool = require('../src/Infrastructures/database/postgres/pool');
 
 const UsersTableTestHelper = {
@@ -11,6 +12,21 @@ const UsersTableTestHelper = {
     const query = {
       text: 'INSERT INTO users VALUES($1, $2, $3, $4)',
       values: [id, username, password, fullname],
+    };
+
+    await pool.query(query);
+  },
+
+  async addUserLogin({
+    id = 'user-123',
+    username = 'dicoding',
+    password = 'secret',
+    fullname = 'Dicoding Indonesia',
+  }) {
+    const hashPassword = await bcrypt.hash(password, 10);
+    const query = {
+      text: 'INSERT INTO users VALUES($1, $2, $3, $4)',
+      values: [id, username, hashPassword, fullname],
     };
 
     await pool.query(query);

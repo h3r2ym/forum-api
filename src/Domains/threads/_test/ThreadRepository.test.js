@@ -21,5 +21,11 @@ describe('ThreadRepository interface', () => {
     await expect(userRepository.getCommendsByThreadId({})).rejects.toThrowError(
       'THREAD_RESPOSITORY.METHOD_NOT_IMPLEMENTED'
     );
+    await expect(userRepository.checkCommentOwner({})).rejects.toThrowError(
+      'THREAD_RESPOSITORY.METHOD_NOT_IMPLEMENTED'
+    );
+    await expect(userRepository.deleteCommentById({})).rejects.toThrowError(
+      'THREAD_RESPOSITORY.METHOD_NOT_IMPLEMENTED'
+    );
   });
 });

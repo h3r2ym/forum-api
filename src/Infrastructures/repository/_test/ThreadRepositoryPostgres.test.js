@@ -1,11 +1,16 @@
 const CommentTableTestHelper = require('../../../../tests/CommentTableTestHelper');
 const ThreadTableTestHelper = require('../../../../tests/ThreadTableTestHelper');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
-const NewThread = require('../../../Domains/threads/entities/NewThread');
 const pool = require('../../database/postgres/pool');
 const ThreadRepositoryPostgres = require('../ThreadRepositoryPostgres');
 
 describe('ThreadRepositoryPostgres', () => {
+  beforeEach(async () => {
+    await UsersTableTestHelper.addUser({});
+    await ThreadTableTestHelper.addThread({});
+    await CommentTableTestHelper.addComment({});
+  });
+
   afterEach(async () => {
     await ThreadTableTestHelper.cleanTable();
     await CommentTableTestHelper.cleanTable();
@@ -41,16 +46,13 @@ describe('ThreadRepositoryPostgres', () => {
 
   describe('newComment function', () => {
     it('should not throw InvariantError when data correctly', async () => {
-      await UsersTableTestHelper.addUser({});
-      await ThreadTableTestHelper.addThread({});
-
       const newComment = {
         content: 'content 123',
       };
       const userId = 'user-123';
       const threadId = 'thread-123';
 
-      const fakeIdGenerator = () => '123';
+      const fakeIdGenerator = () => '1234';
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(
         pool,
         fakeIdGenerator
@@ -61,7 +63,7 @@ describe('ThreadRepositoryPostgres', () => {
 
       // Assert
       const comments = await CommentTableTestHelper.findCommentById(
-        'comment-123'
+        'comment-1234'
       );
       expect(comments).toHaveLength(1);
     });
@@ -69,8 +71,6 @@ describe('ThreadRepositoryPostgres', () => {
 
   describe('checkThreadById function', () => {
     it('should not throw InvariantError when data correctly', async () => {
-      await ThreadTableTestHelper.addThread({});
-
       const threadId = 'thread-123';
 
       const fakeIdGenerator = () => '123';
@@ -90,8 +90,6 @@ describe('ThreadRepositoryPostgres', () => {
 
   describe('getThreadById function', () => {
     it('should not throw InvariantError when data correctly', async () => {
-      await ThreadTableTestHelper.addThread({});
-
       const threadId = 'thread-123';
 
       const fakeIdGenerator = () => '123';
@@ -111,10 +109,6 @@ describe('ThreadRepositoryPostgres', () => {
 
   describe('getCommendsByThreadId function', () => {
     it('should not throw InvariantError when data correctly', async () => {
-      await UsersTableTestHelper.addUser({});
-      await ThreadTableTestHelper.addThread({});
-      await CommentTableTestHelper.addComment({});
-
       const threadId = 'thread-123';
 
       const fakeIdGenerator = () => '123';
@@ -131,6 +125,47 @@ describe('ThreadRepositoryPostgres', () => {
         'thread-123'
       );
       expect(threads).toHaveLength(1);
+    });
+  });
+
+  describe('checkCommentOwner function', () => {
+    it('should not throw when data correctly', async () => {
+      const commentId = 'comment-123';
+      const userId = 'user-123';
+
+      const fakeIdGenerator = () => '123';
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(
+        pool,
+        fakeIdGenerator
+      );
+
+      // Action
+      const verify = async () => {
+        await threadRepositoryPostgres.checkCommentOwner(commentId, userId);
+      };
+
+      // Assert
+
+      expect(verify).not.toThrowError();
+    });
+  });
+
+  describe('deleteCommentById function', () => {
+    it('should not throw when data correctly', async () => {
+      const commentId = 'comment-123';
+
+      const fakeIdGenerator = () => '123';
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(
+        pool,
+        fakeIdGenerator
+      );
+
+      // Action
+      await threadRepositoryPostgres.deleteCommentById(commentId);
+
+      // Assert
+      const check = await CommentTableTestHelper.findCommentById(commentId);
+      expect(check.deleted_at).not.toBeNull();
     });
   });
 });
