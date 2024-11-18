@@ -85,6 +85,21 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     };
   }
 
+  async getCommendsByThreadIdAndCommentId(threadId, commentId) {
+    const query = {
+      text: 'SELECT comments.*,users.username FROM comments INNER JOIN users ON comments.owner = users.id WHERE thread_id = $1 AND comments.id = $2',
+      values: [threadId, commentId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new NotFoundError('Data tidak ditemukan');
+    }
+
+    return result.rows[0];
+  }
+
   async getCommendsByThreadId(threadId) {
     const query = {
       text: 'SELECT comments.*,users.username FROM comments INNER JOIN users ON comments.owner = users.id WHERE thread_id = $1 ORDER BY created_at ASC',
@@ -92,6 +107,10 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     };
 
     const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new NotFoundError('Data tidak ditemukan');
+    }
 
     return result.rows;
   }
