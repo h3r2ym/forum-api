@@ -34,6 +34,17 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     });
   }
 
+  async getRepliesByCommentId(commentId) {
+    const query = {
+      text: 'SELECT replies.*,users.username from replies INNER JOIN users ON replies.owner = users.id WHERE comment_id = $1 ORDER BY created_at ASC',
+      values: [commentId],
+    };
+
+    const result = await this._pool.query(query);
+
+    return result.rows;
+  }
+
   async checkReplyById(id) {
     const query = {
       text: 'SELECT * from replies WHERE id = $1',

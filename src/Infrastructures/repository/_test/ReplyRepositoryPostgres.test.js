@@ -65,6 +65,26 @@ describe('ThreadRepositoryPostgres', () => {
     });
   });
 
+  describe('getRepliesByCommentId function', () => {
+    it('should not throw Not Found when data correctly', async () => {
+      const commentId = 'comment-123';
+
+      const fakeIdGenerator = () => '123';
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(
+        pool,
+        fakeIdGenerator
+      );
+
+      // Action
+      const replies = await replyRepositoryPostgres.getRepliesByCommentId(
+        commentId
+      );
+
+      // Assert
+      expect(replies).toHaveLength(1);
+    });
+  });
+
   describe('checkReplyOwnerById function', () => {
     it('should not throw Authorize when data correctly', async () => {
       const replayId = 'reply-123';

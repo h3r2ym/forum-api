@@ -7,6 +7,10 @@ class ReplyRepository {
     throw new Error('REPLY_RESPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
 
+  async getRepliesByCommentId(commentId) {
+    throw new Error('REPLY_RESPOSITORY.METHOD_NOT_IMPLEMENTED');
+  }
+
   async checkReplyOwnerById(replyId, userId) {
     throw new Error('REPLY_RESPOSITORY.METHOD_NOT_IMPLEMENTED');
   }

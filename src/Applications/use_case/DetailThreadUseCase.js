@@ -1,15 +1,40 @@
-const InvariantError = require('../../Commons/exceptions/InvariantError');
-const NewThread = require('../../Domains/threads/entities/NewThread');
-
 class DetailThreadUseCase {
-  constructor({ threadRepository }) {
+  constructor({ threadRepository, replyRepository }) {
     this._threadRepository = threadRepository;
+    this._replyRepository = replyRepository;
   }
 
   async execute(threadId) {
     const result = await this._threadRepository.getThreadById(threadId);
-    const comments = await this._threadRepository.getCommendsByThreadId(
+    const getComments = await this._threadRepository.getCommendsByThreadId(
       threadId
+    );
+
+    const comments = await Promise.all(
+      getComments.map(async (comment) => {
+        const getReplies = await this._replyRepository.getRepliesByCommentId(
+          comment.id
+        );
+
+        const replies = getReplies.map((reply) => ({
+          id: reply.id,
+          content: !reply.deleted_at
+            ? reply.content
+            : '**balasan telah dihapus**',
+          date: reply.created_at,
+          username: reply.username,
+        }));
+
+        return {
+          id: comment.id,
+          content: !comment.deleted_at
+            ? comment.content
+            : '**komentar telah dihapus**',
+          date: comment.created_at,
+          username: comment.username,
+          replies,
+        };
+      })
     );
 
     return {
@@ -18,12 +43,7 @@ class DetailThreadUseCase {
       body: result.body,
       date: result.created_at,
       username: result.username,
-      comments: comments.map((row) => ({
-        id: row.id,
-        username: row.username,
-        date: row.created_at,
-        content: !row.deleted_at ? row.content : '**komentar telah dihapus**',
-      })),
+      comments,
     };
   }
 }
