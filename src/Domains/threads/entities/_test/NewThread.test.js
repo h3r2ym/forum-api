@@ -17,12 +17,12 @@ describe('a NewThread entities', () => {
     // Arrange
     const payload = {
       title: 'dicoding',
-      owner: {},
+      body: {},
     };
 
     // Action and Assert
     expect(() => new NewThread(payload)).toThrowError(
-      'NEW_THREAD.NOT_CONTAIN_NEEDED_PROPERTY'
+      'NEW_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION'
     );
   });
 

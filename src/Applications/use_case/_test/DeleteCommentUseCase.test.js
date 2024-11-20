@@ -8,13 +8,26 @@ describe('DeleteCommentUseCase', () => {
     const commentId = 'comment-123';
     const userId = 'user-123';
 
+    const expectedDelete = {
+      id: 'comment-123',
+    };
+
     /** creating dependency of use case */
     const mockThreadRepository = new ThreadRepository();
 
     /** mocking needed function */
+    const mockThread = {
+      id: 'thread-1',
+      title: 'title thread',
+      body: 'body thread',
+      owner: 'user-1',
+      created_at: '2024-11-19T02:07:47.387Z',
+      updated_at: '2024-11-19T02:07:47.387Z',
+      deleted_at: null,
+    };
     mockThreadRepository.checkThreadById = jest
       .fn()
-      .mockImplementation(() => Promise.resolve());
+      .mockImplementation(() => Promise.resolve(mockThread));
     mockThreadRepository.checkCommentOwner = jest
       .fn()
       .mockImplementation(() => Promise.resolve());
@@ -34,7 +47,8 @@ describe('DeleteCommentUseCase', () => {
     );
 
     // Assert
-    expect(deleteComment).toStrictEqual({ id: commentId });
+    expect(deleteComment).toStrictEqual(expectedDelete);
+    expect(mockThreadRepository.checkThreadById).toBeCalledWith(threadId);
     expect(mockThreadRepository.checkCommentOwner).toBeCalledWith(
       commentId,
       userId

@@ -15,5 +15,11 @@ describe('ReplayRepository interface', () => {
     await expect(replyRepository.deleteReplyById({})).rejects.toThrowError(
       'REPLY_RESPOSITORY.METHOD_NOT_IMPLEMENTED'
     );
+    await expect(
+      replyRepository.getRepliesByCommentId({})
+    ).rejects.toThrowError('REPLY_RESPOSITORY.METHOD_NOT_IMPLEMENTED');
+    await expect(replyRepository.checkReplyOwnerById({})).rejects.toThrowError(
+      'REPLY_RESPOSITORY.METHOD_NOT_IMPLEMENTED'
+    );
   });
 });

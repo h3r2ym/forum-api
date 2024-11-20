@@ -2,6 +2,8 @@ const CommentTableTestHelper = require('../../../../tests/CommentTableTestHelper
 const ReplyTableTestHelper = require('../../../../tests/ReplyTableTestHelper');
 const ThreadTableTestHelper = require('../../../../tests/ThreadTableTestHelper');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
+const InvariantError = require('../../../Commons/exceptions/InvariantError');
+const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 const pool = require('../../database/postgres/pool');
 const ReplyRepositoryPostgres = require('../ReplyRepositoryPostgres');
 
@@ -63,6 +65,21 @@ describe('ThreadRepositoryPostgres', () => {
       const replies = await ReplyTableTestHelper.findReplyById('reply-123');
       expect(replies).toHaveLength(1);
     });
+
+    it('should throw InvariantError when data uncorrectly', async () => {
+      const replayId = 'reply-12311';
+
+      const fakeIdGenerator = () => '123';
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(
+        pool,
+        fakeIdGenerator
+      );
+
+      // Action
+      expect(
+        replyRepositoryPostgres.checkReplyById(replayId)
+      ).rejects.toThrowError(NotFoundError);
+    });
   });
 
   describe('getRepliesByCommentId function', () => {
@@ -121,6 +138,21 @@ describe('ThreadRepositoryPostgres', () => {
       // Assert
       const replies = await ReplyTableTestHelper.findReplyById('reply-123');
       expect(replies).toHaveLength(1);
+    });
+
+    it('should throw InvariantError when data uncorrectly', async () => {
+      const replyId = 'reply-123xx';
+
+      const fakeIdGenerator = () => '123';
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(
+        pool,
+        fakeIdGenerator
+      );
+
+      // Action
+      await expect(
+        replyRepositoryPostgres.deleteReplyById(replyId)
+      ).rejects.toThrowError(InvariantError);
     });
   });
 });

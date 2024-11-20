@@ -1,10 +1,6 @@
-const AuthenticationRepository = require('../../../Domains/authentications/AuthenticationRepository');
-const NewAuth = require('../../../Domains/authentications/entities/NewAuth');
 const InsertThread = require('../../../Domains/threads/entities/InsertThread');
 const NewThread = require('../../../Domains/threads/entities/NewThread');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
-const UserRepository = require('../../../Domains/users/UserRepository');
-const AuthenticationTokenManager = require('../../security/AuthenticationTokenManager');
 const NewThreadUseCase = require('../NewThreadUseCase');
 
 describe('NewThreadUseCase', () => {
@@ -58,6 +54,24 @@ describe('NewThreadUseCase', () => {
         body: useCasePayload.body,
         owner: useCasePayload.owner,
       })
+    );
+  });
+
+  it('should add new thread on incorrectly payload', async () => {
+    // Arrange
+    const owner = 'user-123';
+
+    /** creating dependency of use case */
+    const mockThreadRepository = new ThreadRepository();
+
+    const newThreadUseCase = new NewThreadUseCase({
+      threadRepository: mockThreadRepository,
+    });
+
+    // Action
+    // Assert
+    await expect(newThreadUseCase.execute(owner, {})).rejects.toThrowError(
+      Error
     );
   });
 });

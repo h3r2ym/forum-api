@@ -4,8 +4,9 @@ const NewCommentUseCase = require('../../../../Applications/use_case/NewCommentU
 const NewThreadUseCase = require('../../../../Applications/use_case/NewThreadUseCase');
 
 class ThreadsHandler {
-  constructor(container) {
+  constructor(container, validator) {
     this._container = container;
+    this._validator = validator;
 
     this.postThreadHandler = this.postThreadHandler.bind(this);
     this.postCommentHandler = this.postCommentHandler.bind(this);
@@ -14,6 +15,7 @@ class ThreadsHandler {
   }
 
   async postThreadHandler(request, h) {
+    this._validator.validateThreadsPayload(request.payload);
     const newThreadUseCase = this._container.getInstance(NewThreadUseCase.name);
     const { id: userId } = request.auth.credentials;
 

@@ -41,13 +41,9 @@ describe('a NewThread entities', () => {
     const newThread = new InsertThread(payload);
 
     // Assert
-    expect(newThread).toStrictEqual(
-      new InsertThread({
-        id: 'thread-123',
-        title: 'title dicoding',
-        body: 'body dicoding',
-        owner: 'user-22231',
-      })
-    );
+    expect(newThread.id).toEqual(payload.id);
+    expect(newThread.title).toEqual(payload.title);
+    expect(newThread.body).toEqual(payload.body);
+    expect(newThread.owner).toEqual(payload.owner);
   });
 });

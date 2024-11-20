@@ -27,5 +27,8 @@ describe('ThreadRepository interface', () => {
     await expect(threadRepository.deleteCommentById({})).rejects.toThrowError(
       'THREAD_RESPOSITORY.METHOD_NOT_IMPLEMENTED'
     );
+    await expect(
+      threadRepository.getCommendsByThreadIdAndCommentId({})
+    ).rejects.toThrowError('THREAD_RESPOSITORY.METHOD_NOT_IMPLEMENTED');
   });
 });
