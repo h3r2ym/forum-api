@@ -2,6 +2,7 @@ const CommentTableTestHelper = require('../../../../tests/CommentTableTestHelper
 const ReplyTableTestHelper = require('../../../../tests/ReplyTableTestHelper');
 const ThreadTableTestHelper = require('../../../../tests/ThreadTableTestHelper');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
+const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
 const InvariantError = require('../../../Commons/exceptions/InvariantError');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 const pool = require('../../database/postgres/pool');
@@ -114,11 +115,43 @@ describe('ThreadRepositoryPostgres', () => {
       );
 
       // Action
-      await replyRepositoryPostgres.checkReplyOwnerById(replayId, userId);
+      const result = await replyRepositoryPostgres.checkReplyOwnerById(
+        replayId,
+        userId
+      );
 
       // Assert
-      const replies = await ReplyTableTestHelper.findReplyById('reply-123');
-      expect(replies).toHaveLength(1);
+      expect(result.id).toEqual('reply-123');
+    });
+
+    it('should throw NotFoundError when data uncorrectly', async () => {
+      const replayId = 'reply-xxx';
+      const userId = 'user-123';
+      const fakeIdGenerator = () => '123';
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(
+        pool,
+        fakeIdGenerator
+      );
+
+      // Action
+      await expect(
+        replyRepositoryPostgres.checkReplyOwnerById(replayId, userId)
+      ).rejects.toThrowError(NotFoundError);
+    });
+
+    it('should throw NotFoundError when data uncorrectly', async () => {
+      const replayId = 'reply-123';
+      const userId = 'user-xxx';
+      const fakeIdGenerator = () => '123';
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(
+        pool,
+        fakeIdGenerator
+      );
+
+      // Action
+      await expect(
+        replyRepositoryPostgres.checkReplyOwnerById(replayId, userId)
+      ).rejects.toThrowError(AuthorizationError);
     });
   });
 

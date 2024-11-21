@@ -1,4 +1,3 @@
-const InvariantError = require('../../Commons/exceptions/InvariantError');
 const NewReply = require('../../Domains/threads/entities/NewReply');
 
 class NewReplyUseCase {

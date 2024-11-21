@@ -22,6 +22,16 @@ describe('NewCommentUseCase', () => {
     const mockThreadRepository = new ThreadRepository();
     const mockCommentsValidator = CommentsValidator;
 
+    const mockThread = {
+      id: 'thread-123',
+      title: 'title thread',
+      body: 'body thread',
+      owner: 'user-123',
+      created_at: '2024-11-19T02:07:49.404Z',
+      updated_at: '2024-11-19T02:07:49.404Z',
+      deleted_at: null,
+    };
+
     const mockNewThread = new InsertComment({
       id: 'comment-123',
       threadId: 'thread-123',
@@ -35,7 +45,7 @@ describe('NewCommentUseCase', () => {
       .mockImplementation(() => Promise.resolve());
     mockThreadRepository.checkThreadById = jest
       .fn()
-      .mockImplementation(() => Promise.resolve());
+      .mockImplementation(() => Promise.resolve(mockThread));
     mockThreadRepository.addComment = jest
       .fn()
       .mockImplementation(() => Promise.resolve(mockNewThread));

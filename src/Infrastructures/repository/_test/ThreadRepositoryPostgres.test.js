@@ -1,6 +1,7 @@
 const CommentTableTestHelper = require('../../../../tests/CommentTableTestHelper');
 const ThreadTableTestHelper = require('../../../../tests/ThreadTableTestHelper');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
+const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
 const InvariantError = require('../../../Commons/exceptions/InvariantError');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 const InsertThread = require('../../../Domains/threads/entities/InsertThread');
@@ -105,6 +106,21 @@ describe('ThreadRepositoryPostgres', () => {
       // Assert
       expect(result.id).toEqual('thread-123');
     });
+
+    it('should throw NotFoundError when data correctly', async () => {
+      const threadId = 'thread-xxx';
+
+      const fakeIdGenerator = () => '123';
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(
+        pool,
+        fakeIdGenerator
+      );
+
+      // Action
+      await expect(
+        threadRepositoryPostgres.checkThreadById(threadId)
+      ).rejects.toThrowError(NotFoundError);
+    });
   });
 
   describe('getThreadById function', () => {
@@ -118,11 +134,26 @@ describe('ThreadRepositoryPostgres', () => {
       );
 
       // Action
-      await threadRepositoryPostgres.getThreadById(threadId);
+      const thread = await threadRepositoryPostgres.getThreadById(threadId);
 
       // Assert
-      const threads = await ThreadTableTestHelper.findThreadById('thread-123');
-      expect(threads).toHaveLength(1);
+      expect(thread.id).toEqual('thread-123');
+    });
+
+    it('should throw NotFoundError when data uncorrectly', async () => {
+      const threadId = 'thread-xxx';
+
+      const fakeIdGenerator = () => '123';
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(
+        pool,
+        fakeIdGenerator
+      );
+
+      // Action
+      // Assert
+      await expect(
+        threadRepositoryPostgres.getThreadById(threadId)
+      ).rejects.toThrowError(NotFoundError);
     });
   });
 
@@ -145,6 +176,7 @@ describe('ThreadRepositoryPostgres', () => {
       );
       expect(threads).toHaveLength(1);
     });
+
     it('should throw NotFoundError when data uncorrectly', async () => {
       const threadId = 'thread-123xx';
 
@@ -178,8 +210,48 @@ describe('ThreadRepositoryPostgres', () => {
       };
 
       // Assert
+      const action = async () => {
+        await threadRepositoryPostgres.checkCommentOwner(commentId, userId);
+      };
 
-      expect(verify).not.toThrowError();
+      expect(action).not.toThrowError(NotFoundError);
+      expect(action).not.toThrowError(AuthorizationError);
+    });
+
+    it('should not throw when data correctly', async () => {
+      const commentId = 'comment-xxx';
+      const userId = 'user-123';
+
+      const fakeIdGenerator = () => '123';
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(
+        pool,
+        fakeIdGenerator
+      );
+
+      // Action
+      // Assert
+
+      await expect(
+        threadRepositoryPostgres.checkCommentOwner(commentId, userId)
+      ).rejects.toThrowError(NotFoundError);
+    });
+
+    it('should not throw when data correctly', async () => {
+      const commentId = 'comment-123';
+      const userId = 'user-xxx';
+
+      const fakeIdGenerator = () => '123';
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(
+        pool,
+        fakeIdGenerator
+      );
+
+      // Action
+      // Assert
+
+      await expect(
+        threadRepositoryPostgres.checkCommentOwner(commentId, userId)
+      ).rejects.toThrowError(AuthorizationError);
     });
   });
 
@@ -214,6 +286,73 @@ describe('ThreadRepositoryPostgres', () => {
       await expect(
         threadRepositoryPostgres.deleteCommentById(commentId)
       ).rejects.toThrowError(InvariantError);
+    });
+  });
+
+  describe('getCommendsByThreadIdAndCommentId function', () => {
+    it('should not throw when data correctly', async () => {
+      const threadId = 'thread-123';
+      const commentId = 'comment-123';
+
+      const fakeIdGenerator = () => '123';
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(
+        pool,
+        fakeIdGenerator
+      );
+
+      // Action
+      const result =
+        await threadRepositoryPostgres.getCommendsByThreadIdAndCommentId(
+          threadId,
+          commentId
+        );
+
+      // Assert
+
+      expect(result.id).toEqual('comment-123');
+      expect(result.thread_id).toEqual('thread-123');
+    });
+
+    it('should throw NotFoundError when data uncorrectly', async () => {
+      const threadId = 'thread-xxx';
+      const commentId = 'comment-123';
+
+      const fakeIdGenerator = () => '123';
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(
+        pool,
+        fakeIdGenerator
+      );
+
+      // Action
+      // Assert
+
+      await expect(
+        threadRepositoryPostgres.getCommendsByThreadIdAndCommentId(
+          threadId,
+          commentId
+        )
+      ).rejects.toThrowError(NotFoundError);
+    });
+
+    it('should throw NotFoundError when data uncorrectly', async () => {
+      const threadId = 'thread-123';
+      const commentId = 'comment-xxx';
+
+      const fakeIdGenerator = () => '123';
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(
+        pool,
+        fakeIdGenerator
+      );
+
+      // Action
+      // Assert
+
+      await expect(
+        threadRepositoryPostgres.getCommendsByThreadIdAndCommentId(
+          threadId,
+          commentId
+        )
+      ).rejects.toThrowError(NotFoundError);
     });
   });
 });
