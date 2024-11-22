@@ -1,11 +1,8 @@
 const InsertReply = require('../../../Domains/threads/entities/InsertReply');
-const InsertThread = require('../../../Domains/threads/entities/InsertThread');
 const NewReply = require('../../../Domains/threads/entities/NewReply');
-const NewThread = require('../../../Domains/threads/entities/NewThread');
 const ReplyRepository = require('../../../Domains/threads/ReplyRepository');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 const NewReplyUseCase = require('../NewReplyUseCase');
-const NewThreadUseCase = require('../NewThreadUseCase');
 
 describe('NewReplyUseCase', () => {
   it('should add new reply comment on action correctly', async () => {
@@ -29,10 +26,18 @@ describe('NewReplyUseCase', () => {
     const mockReplyRepository = new ReplyRepository();
     const mockThreadRepository = new ThreadRepository();
 
+    const mockComment = {
+      id: 'comment-123',
+      thread_id: 'thread-123',
+      content: 'comment content',
+      owner: 'user-123',
+      username: 'user 123',
+    };
+
     /** mocking needed function */
     mockThreadRepository.getCommendsByThreadIdAndCommentId = jest
       .fn()
-      .mockImplementation(() => Promise.resolve());
+      .mockImplementation(() => Promise.resolve(mockComment));
 
     mockReplyRepository.addReply = jest
       .fn()

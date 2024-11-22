@@ -86,7 +86,14 @@ describe('ThreadRepositoryPostgres', () => {
         content: 'content 123',
         owner: 'user-123',
       };
+
       expect(result).toStrictEqual(expected);
+
+      const expectedResult = await CommentTableTestHelper.findCommentById(
+        expected.id
+      );
+
+      expect(expectedResult).toHaveLength(1);
     });
   });
 
@@ -104,7 +111,17 @@ describe('ThreadRepositoryPostgres', () => {
       const result = await threadRepositoryPostgres.checkThreadById(threadId);
 
       // Assert
-      expect(result.id).toEqual('thread-123');
+      const expected = {
+        id: 'thread-123',
+        title: 'title thread',
+        body: 'body thread',
+        owner: 'user-123',
+        created_at: null,
+        update_at: null,
+        deleted_at: null,
+      };
+
+      expect(result).toStrictEqual(expected);
     });
 
     it('should throw NotFoundError when data correctly', async () => {
