@@ -31,6 +31,9 @@ describe('NewReplyUseCase', () => {
       thread_id: 'thread-123',
       content: 'comment content',
       owner: 'user-123',
+      created_at: '2024-11-19T02:07:47.387Z',
+      updated_at: '2024-11-19T02:07:47.387Z',
+      deleted_at: null,
       username: 'user 123',
     };
 

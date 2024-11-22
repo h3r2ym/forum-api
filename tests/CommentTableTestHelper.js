@@ -7,8 +7,8 @@ const CommentTableTestHelper = {
     threadId = 'thread-123',
     content = 'dicoding',
     owner = 'user-123',
-    createdAt = new Date().toISOString(),
-    updatedAt = new Date().toISOString(),
+    createdAt = '2024-11-19T02:07:47.387Z',
+    updatedAt = '2024-11-19T02:07:47.387Z',
     deletedAt = null,
   }) {
     const query = {

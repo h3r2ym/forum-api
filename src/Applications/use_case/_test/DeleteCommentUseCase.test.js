@@ -2,7 +2,7 @@ const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 const DeleteCommentUseCase = require('../DeleteCommentUseCase');
 
 describe('DeleteCommentUseCase', () => {
-  it('should add new thread on action correctly', async () => {
+  it('should delete comment on action correctly', async () => {
     // Arrange
     const threadId = 'thread-123';
     const commentId = 'comment-123';
