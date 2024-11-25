@@ -196,22 +196,24 @@ describe('ThreadRepositoryPostgres', () => {
       );
 
       // Action
-      await threadRepositoryPostgres.getCommendsByThreadId(threadId);
-
-      // Assert
-      const threads = await CommentTableTestHelper.findCommentsByThreadId(
-        'thread-123'
+      const result = await threadRepositoryPostgres.getCommendsByThreadId(
+        threadId
       );
 
+      // Assert
       const expected = {
         id: 'comment-123',
         thread_id: 'thread-123',
         content: 'dicoding',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        deletedAt: null,
+        owner: 'user-123',
+        username: 'dicoding',
+        created_at: '2024-11-19T02:07:47.387Z',
+        updated_at: '2024-11-19T02:07:47.387Z',
+        deleted_at: null,
       };
-      expect(threads).toHaveLength(1);
+
+      expect(result).toHaveLength(1);
+      expect(result).toStrictEqual([expected]);
     });
 
     it('should throw NotFoundError when data uncorrectly', async () => {
@@ -242,17 +244,23 @@ describe('ThreadRepositoryPostgres', () => {
       );
 
       // Action
-      const verify = async () => {
-        await threadRepositoryPostgres.checkCommentOwner(commentId, userId);
-      };
-
       // Assert
-      const action = async () => {
-        await threadRepositoryPostgres.checkCommentOwner(commentId, userId);
+      const result = await threadRepositoryPostgres.checkCommentOwner(
+        commentId,
+        userId
+      );
+
+      const expected = {
+        id: 'comment-123',
+        thread_id: 'thread-123',
+        content: 'dicoding',
+        owner: 'user-123',
+        created_at: '2024-11-19T02:07:47.387Z',
+        updated_at: '2024-11-19T02:07:47.387Z',
+        deleted_at: null,
       };
 
-      expect(action).not.toThrowError(NotFoundError);
-      expect(action).not.toThrowError(AuthorizationError);
+      expect(result).toStrictEqual(expected);
     });
 
     it('should not throw when data correctly', async () => {

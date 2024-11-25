@@ -25,12 +25,23 @@ describe('DeleteCommentUseCase', () => {
       updated_at: '2024-11-19T02:07:47.387Z',
       deleted_at: null,
     };
+
+    const mockComment = {
+      id: 'comment-1',
+      thread_id: 'thread-1',
+      content: 'content coment',
+      owner: 'user-1',
+      created_at: '2024-11-19T02:07:47.387Z',
+      updated_at: '2024-11-19T02:07:47.387Z',
+      deleted_at: null,
+    };
+
     mockThreadRepository.checkThreadById = jest
       .fn()
       .mockImplementation(() => Promise.resolve(mockThread));
     mockThreadRepository.checkCommentOwner = jest
       .fn()
-      .mockImplementation(() => Promise.resolve());
+      .mockImplementation(() => Promise.resolve(mockComment));
     mockThreadRepository.deleteCommentById = jest
       .fn()
       .mockImplementation(() => Promise.resolve({ id: commentId }));

@@ -166,11 +166,13 @@ describe('ThreadRepositoryPostgres', () => {
       );
 
       // Action
-      await replyRepositoryPostgres.deleteReplyById(replyId);
+      const result = await replyRepositoryPostgres.deleteReplyById(replyId);
+      const replies = await ReplyTableTestHelper.findReplyById('reply-123');
 
       // Assert
-      const replies = await ReplyTableTestHelper.findReplyById('reply-123');
+      expect(result).toEqual({ id: 'reply-123' });
       expect(replies).toHaveLength(1);
+      expect(replies.deleted_at).not.toBeNull();
     });
 
     it('should throw InvariantError when data uncorrectly', async () => {

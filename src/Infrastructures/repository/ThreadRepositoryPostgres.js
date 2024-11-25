@@ -130,6 +130,8 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     if (result.rows[0].owner !== userId) {
       throw new AuthorizationError('Anda bukan pemilik comment ini');
     }
+
+    return result.rows[0];
   }
 
   async deleteCommentById(commentId) {
