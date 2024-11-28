@@ -11,12 +11,11 @@ describe('NewCommentUseCase', () => {
       content: 'content 123',
     };
 
-    const expectedResult = new InsertComment({
+    const expectedResult = {
       id: 'comment-123',
-      threadId: 'thread-123',
       content: useCasePayload.content,
       owner: 'user-123',
-    });
+    };
 
     /** creating dependency of use case */
     const mockThreadRepository = new ThreadRepository();
@@ -32,12 +31,11 @@ describe('NewCommentUseCase', () => {
       deleted_at: null,
     };
 
-    const mockNewThread = new InsertComment({
+    const mockNewComment = {
       id: 'comment-123',
-      threadId: 'thread-123',
       content: useCasePayload.content,
       owner: 'user-123',
-    });
+    };
 
     /** mocking needed function */
     mockCommentsValidator.validateCommentsPayload = jest
@@ -48,7 +46,7 @@ describe('NewCommentUseCase', () => {
       .mockImplementation(() => Promise.resolve(mockThread));
     mockThreadRepository.addComment = jest
       .fn()
-      .mockImplementation(() => Promise.resolve(mockNewThread));
+      .mockImplementation(() => Promise.resolve(mockNewComment));
 
     const newCommentUseCase = new NewCommentUseCase({
       threadRepository: mockThreadRepository,

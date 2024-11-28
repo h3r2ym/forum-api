@@ -5,6 +5,7 @@ const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
 const InvariantError = require('../../../Commons/exceptions/InvariantError');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
+const InsertReply = require('../../../Domains/threads/entities/InsertReply');
 const pool = require('../../database/postgres/pool');
 const ReplyRepositoryPostgres = require('../ReplyRepositoryPostgres');
 
@@ -41,11 +42,21 @@ describe('ThreadRepositoryPostgres', () => {
       );
 
       // Action
-      await replyRepositoryPostgres.addReply(commentId, userId, newReply);
+      const result = await replyRepositoryPostgres.addReply(
+        commentId,
+        userId,
+        newReply
+      );
 
       // Assert
-      const replies = await ReplyTableTestHelper.findReplyById('reply-1234');
-      expect(replies).toHaveLength(1);
+      const expected = new InsertReply({
+        id: 'reply-1234',
+        commentId: 'comment-123',
+        content: newReply.content,
+        owner: 'user-123',
+      });
+
+      expect(result).toStrictEqual(expected);
     });
   });
 
