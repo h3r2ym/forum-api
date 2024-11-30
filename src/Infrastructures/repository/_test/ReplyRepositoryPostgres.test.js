@@ -48,15 +48,24 @@ describe('ThreadRepositoryPostgres', () => {
         newReply
       );
 
+      const actualData = await ReplyTableTestHelper.findReplyById(result.id);
+
       // Assert
-      const expected = new InsertReply({
+      const expectedData = {
         id: 'reply-1234',
         commentId: 'comment-123',
         content: newReply.content,
         owner: 'user-123',
-      });
+      };
+
+      const expected = new InsertReply(expectedData);
 
       expect(result).toStrictEqual(expected);
+
+      expect(actualData[0].id).toEqual(expectedData.id);
+      expect(actualData[0].comment_id).toEqual(expectedData.commentId);
+      expect(actualData[0].content).toEqual(expectedData.content);
+      expect(actualData[0].owner).toEqual(expectedData.owner);
     });
   });
 
@@ -71,11 +80,23 @@ describe('ThreadRepositoryPostgres', () => {
       );
 
       // Action
-      await replyRepositoryPostgres.checkReplyById(replayId);
+      const actual = await replyRepositoryPostgres.checkReplyById(replayId);
 
       // Assert
+      const expected = {
+        id: 'reply-123',
+        comment_id: 'comment-123',
+        content: 'replay content',
+        owner: 'user-123',
+      };
+
       const replies = await ReplyTableTestHelper.findReplyById('reply-123');
+
       expect(replies).toHaveLength(1);
+      expect(actual.id).toEqual(expected.id);
+      expect(actual.comment_id).toEqual(expected.comment_id);
+      expect(actual.content).toEqual(expected.content);
+      expect(actual.owner).toEqual(expected.owner);
     });
 
     it('should throw InvariantError when data uncorrectly', async () => {
@@ -109,8 +130,21 @@ describe('ThreadRepositoryPostgres', () => {
         commentId
       );
 
+      const expected = {
+        id: 'reply-123',
+        comment_id: 'comment-123',
+        content: 'replay content',
+        owner: 'user-123',
+        username: 'dicoding',
+      };
+
       // Assert
       expect(replies).toHaveLength(1);
+      expect(replies[0].id).toEqual(expected.id);
+      expect(replies[0].comment_id).toEqual(expected.comment_id);
+      expect(replies[0].content).toEqual(expected.content);
+      expect(replies[0].owner).toEqual(expected.owner);
+      expect(replies[0].username).toEqual(expected.username);
     });
   });
 
