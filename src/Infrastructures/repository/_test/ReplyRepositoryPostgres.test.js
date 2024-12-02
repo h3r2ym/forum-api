@@ -51,21 +51,15 @@ describe('ThreadRepositoryPostgres', () => {
       const actualData = await ReplyTableTestHelper.findReplyById(result.id);
 
       // Assert
-      const expectedData = {
+      const expected = new InsertReply({
         id: 'reply-1234',
         commentId: 'comment-123',
         content: newReply.content,
         owner: 'user-123',
-      };
-
-      const expected = new InsertReply(expectedData);
+      });
 
       expect(result).toStrictEqual(expected);
-
-      expect(actualData[0].id).toEqual(expectedData.id);
-      expect(actualData[0].comment_id).toEqual(expectedData.commentId);
-      expect(actualData[0].content).toEqual(expectedData.content);
-      expect(actualData[0].owner).toEqual(expectedData.owner);
+      expect(actualData).toHaveLength(1);
     });
   });
 
@@ -88,18 +82,15 @@ describe('ThreadRepositoryPostgres', () => {
         comment_id: 'comment-123',
         content: 'replay content',
         owner: 'user-123',
+        created_at: '2024-11-19T02:07:47.387Z',
+        updated_at: '2024-11-19T02:07:47.387Z',
+        deleted_at: null,
       };
 
-      const replies = await ReplyTableTestHelper.findReplyById('reply-123');
-
-      expect(replies).toHaveLength(1);
-      expect(actual.id).toEqual(expected.id);
-      expect(actual.comment_id).toEqual(expected.comment_id);
-      expect(actual.content).toEqual(expected.content);
-      expect(actual.owner).toEqual(expected.owner);
+      expect(actual).toStrictEqual(expected);
     });
 
-    it('should throw InvariantError when data uncorrectly', async () => {
+    it('should throw NotFoundError when data uncorrectly', async () => {
       const replayId = 'reply-12311';
 
       const fakeIdGenerator = () => '123';
@@ -136,15 +127,14 @@ describe('ThreadRepositoryPostgres', () => {
         content: 'replay content',
         owner: 'user-123',
         username: 'dicoding',
+        created_at: '2024-11-19T02:07:47.387Z',
+        updated_at: '2024-11-19T02:07:47.387Z',
+        deleted_at: null,
       };
 
       // Assert
       expect(replies).toHaveLength(1);
-      expect(replies[0].id).toEqual(expected.id);
-      expect(replies[0].comment_id).toEqual(expected.comment_id);
-      expect(replies[0].content).toEqual(expected.content);
-      expect(replies[0].owner).toEqual(expected.owner);
-      expect(replies[0].username).toEqual(expected.username);
+      expect(replies[0]).toStrictEqual(expected);
     });
   });
 
@@ -165,8 +155,18 @@ describe('ThreadRepositoryPostgres', () => {
         userId
       );
 
+      const expected = {
+        id: 'reply-123',
+        comment_id: 'comment-123',
+        content: 'replay content',
+        owner: 'user-123',
+        created_at: '2024-11-19T02:07:47.387Z',
+        updated_at: '2024-11-19T02:07:47.387Z',
+        deleted_at: null,
+      };
+
       // Assert
-      expect(result.id).toEqual('reply-123');
+      expect(result).toStrictEqual(expected);
     });
 
     it('should throw NotFoundError when data uncorrectly', async () => {
@@ -184,7 +184,7 @@ describe('ThreadRepositoryPostgres', () => {
       ).rejects.toThrowError(NotFoundError);
     });
 
-    it('should throw NotFoundError when data uncorrectly', async () => {
+    it('should throw AuthorizationError when data uncorrectly', async () => {
       const replayId = 'reply-123';
       const userId = 'user-xxx';
       const fakeIdGenerator = () => '123';

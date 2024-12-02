@@ -7,8 +7,8 @@ const ReplyTableTestHelper = {
     commentId = 'comment-123',
     content = 'replay content',
     owner = 'user-123',
-    createdAt = new Date().toISOString(),
-    updatedAt = new Date().toISOString(),
+    createdAt = '2024-11-19T02:07:47.387Z',
+    updatedAt = '2024-11-19T02:07:47.387Z',
     deletedAt = null,
   }) {
     const query = {
