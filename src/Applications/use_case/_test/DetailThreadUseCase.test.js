@@ -174,7 +174,7 @@ describe('DetailThreadUseCase', () => {
     const threadId = 'thread-1';
 
     const expectedThread = {
-      id: 'thread-1',
+      id: 'thread-12',
       title: 'sebuah thread',
       body: 'sebuah body thread',
       username: 'user 1',
