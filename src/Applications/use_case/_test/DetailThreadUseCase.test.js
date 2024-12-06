@@ -1,3 +1,4 @@
+const LikeRepository = require('../../../Domains/threads/LikeRepository');
 const ReplyRepository = require('../../../Domains/threads/ReplyRepository');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 const DetailThreadUseCase = require('../DetailThreadUseCase');
@@ -19,6 +20,7 @@ describe('DetailThreadUseCase', () => {
           content: 'comment content',
           username: 'user 1',
           date: '2021-08-08T07:19:09.775Z',
+          likeCount: 1,
           replies: [
             {
               id: 'reply-1',
@@ -40,6 +42,7 @@ describe('DetailThreadUseCase', () => {
     /** creating dependency of use case */
     const mockThreadRepository = new ThreadRepository();
     const mockReplyRepository = new ReplyRepository();
+    const mockLikeRepository = new LikeRepository();
 
     mockThread = {
       id: 'thread-1',
@@ -60,6 +63,10 @@ describe('DetailThreadUseCase', () => {
         username: 'user 1',
       },
     ];
+
+    mockLike = {
+      count: '1',
+    };
 
     mockReply = [
       {
@@ -93,9 +100,14 @@ describe('DetailThreadUseCase', () => {
       .fn()
       .mockImplementation(() => Promise.resolve(mockReply));
 
+    mockLikeRepository.findCountLikeByCommentId = jest
+      .fn()
+      .mockImplementation(() => Promise.resolve(mockLike));
+
     const detailThreadUseCase = new DetailThreadUseCase({
       threadRepository: mockThreadRepository,
       replyRepository: mockReplyRepository,
+      likeRepository: mockLikeRepository,
     });
 
     // Action
@@ -109,6 +121,9 @@ describe('DetailThreadUseCase', () => {
       'thread-1'
     );
     expect(mockReplyRepository.getRepliesByCommentId).toBeCalledWith(
+      'comment-1'
+    );
+    expect(mockLikeRepository.findCountLikeByCommentId).toBeCalledWith(
       'comment-1'
     );
   });
@@ -185,6 +200,7 @@ describe('DetailThreadUseCase', () => {
           content: 'comment content',
           username: 'user 1',
           date: '2021-08-08T07:19:09.775Z',
+          likeCount: 1,
           replies: [],
         },
       ],
@@ -193,6 +209,7 @@ describe('DetailThreadUseCase', () => {
     /** creating dependency of use case */
     const mockThreadRepository = new ThreadRepository();
     const mockReplyRepository = new ReplyRepository();
+    const mockLikeRepository = new LikeRepository();
 
     mockThread = {
       id: 'thread-1',
@@ -214,6 +231,10 @@ describe('DetailThreadUseCase', () => {
       },
     ];
 
+    mockLike = {
+      count: '1',
+    };
+
     mockReply = [];
 
     /** mocking needed function */
@@ -229,9 +250,14 @@ describe('DetailThreadUseCase', () => {
       .fn()
       .mockImplementation(() => Promise.resolve(mockReply));
 
+    mockLikeRepository.findCountLikeByCommentId = jest
+      .fn()
+      .mockImplementation(() => Promise.resolve(mockLike));
+
     const detailThreadUseCase = new DetailThreadUseCase({
       threadRepository: mockThreadRepository,
       replyRepository: mockReplyRepository,
+      likeRepository: mockLikeRepository,
     });
 
     // Action
@@ -247,6 +273,9 @@ describe('DetailThreadUseCase', () => {
     expect(mockReplyRepository.getRepliesByCommentId).toBeCalledWith(
       'comment-1'
     );
+    expect(mockLikeRepository.findCountLikeByCommentId).toBeCalledWith(
+      'comment-1'
+    );
   });
 
   it('should detail thread on delete replies', async () => {
@@ -256,6 +285,7 @@ describe('DetailThreadUseCase', () => {
     /** creating dependency of use case */
     const mockThreadRepository = new ThreadRepository();
     const mockReplyRepository = new ReplyRepository();
+    const mockLikeRepository = new LikeRepository();
 
     mockThread = {
       id: 'thread-1',
@@ -278,6 +308,10 @@ describe('DetailThreadUseCase', () => {
         deleted_at: null,
       },
     ];
+
+    mockLike = {
+      count: '1',
+    };
 
     mockReply = [
       {
@@ -313,9 +347,14 @@ describe('DetailThreadUseCase', () => {
       .fn()
       .mockImplementation(() => Promise.resolve(mockReply));
 
+    mockLikeRepository.findCountLikeByCommentId = jest
+      .fn()
+      .mockImplementation(() => Promise.resolve(mockLike));
+
     const detailThreadUseCase = new DetailThreadUseCase({
       threadRepository: mockThreadRepository,
       replyRepository: mockReplyRepository,
+      likeRepository: mockLikeRepository,
     });
 
     // Action
@@ -334,6 +373,7 @@ describe('DetailThreadUseCase', () => {
           content: 'comment content',
           username: 'user 1',
           date: '2021-08-08T07:19:09.775Z',
+          likeCount: 1,
           replies: [
             {
               id: 'reply-1',
@@ -360,6 +400,9 @@ describe('DetailThreadUseCase', () => {
     expect(mockReplyRepository.getRepliesByCommentId).toBeCalledWith(
       'comment-1'
     );
+    expect(mockLikeRepository.findCountLikeByCommentId).toBeCalledWith(
+      'comment-1'
+    );
   });
 
   it('should detail thread on delete comment', async () => {
@@ -369,6 +412,7 @@ describe('DetailThreadUseCase', () => {
     /** creating dependency of use case */
     const mockThreadRepository = new ThreadRepository();
     const mockReplyRepository = new ReplyRepository();
+    const mockLikeRepository = new LikeRepository();
 
     mockThread = {
       id: 'thread-1',
@@ -392,6 +436,10 @@ describe('DetailThreadUseCase', () => {
       },
     ];
 
+    mockLike = {
+      count: '1',
+    };
+
     mockReply = [];
 
     /** mocking needed function */
@@ -407,9 +455,14 @@ describe('DetailThreadUseCase', () => {
       .fn()
       .mockImplementation(() => Promise.resolve(mockReply));
 
+    mockLikeRepository.findCountLikeByCommentId = jest
+      .fn()
+      .mockImplementation(() => Promise.resolve(mockLike));
+
     const detailThreadUseCase = new DetailThreadUseCase({
       threadRepository: mockThreadRepository,
       replyRepository: mockReplyRepository,
+      likeRepository: mockLikeRepository,
     });
 
     // Action
@@ -428,6 +481,7 @@ describe('DetailThreadUseCase', () => {
           content: '**komentar telah dihapus**',
           username: 'user 1',
           date: '2021-08-08T07:19:09.775Z',
+          likeCount: 1,
           replies: [],
         },
       ],
@@ -439,6 +493,9 @@ describe('DetailThreadUseCase', () => {
       'thread-1'
     );
     expect(mockReplyRepository.getRepliesByCommentId).toBeCalledWith(
+      'comment-1'
+    );
+    expect(mockLikeRepository.findCountLikeByCommentId).toBeCalledWith(
       'comment-1'
     );
   });
