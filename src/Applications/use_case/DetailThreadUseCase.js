@@ -1,7 +1,8 @@
 class DetailThreadUseCase {
-  constructor({ threadRepository, replyRepository }) {
+  constructor({ threadRepository, replyRepository, likeRepository }) {
     this._threadRepository = threadRepository;
     this._replyRepository = replyRepository;
+    this._likeRepository = likeRepository;
   }
 
   async execute(threadId) {
@@ -13,6 +14,10 @@ class DetailThreadUseCase {
     const comments = await Promise.all(
       getComments.map(async (comment) => {
         const getReplies = await this._replyRepository.getRepliesByCommentId(
+          comment.id
+        );
+
+        const likeCount = await this._likeRepository.findCountLikeByCommentId(
           comment.id
         );
 
@@ -32,6 +37,7 @@ class DetailThreadUseCase {
             : '**komentar telah dihapus**',
           date: comment.created_at,
           username: comment.username,
+          likeCount: parseInt(likeCount.count, 10),
           replies,
         };
       })
